@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Name: wordsworth
-# Description:  Frequency analysis tool
+# Description: Frequency analysis tool
 # Author: autonomoid
 # Date: 2014-06-22
 # Licence: GPLv3
@@ -168,8 +168,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Perform letter, word and n-tuple frequency analysis on text files.')
     parser.add_argument('--filename', '-f', dest='inputfile', required=True, help='Text file to parse.')
-    parser.add_argument('--ntuple', '-n', dest='max_n_word', required=False, default=4, type=int, help='The maximum length n-tuple of words')
-    parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words')
+    parser.add_argument('--ntuple', '-n', dest='max_n_word', required=False, default=4, type=int, help='The maximum length n-tuple of words. Default is 4.')
+    parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words. Default is 20.')
+    parser.add_argument('--allow-digits', '-d', dest='allowdigits', default=False, required=False, help='Allow digits to be parsed (true/false). Default is false.')
     args = parser.parse_args()
 
     max_n_word = args.max_n_word
@@ -179,10 +180,20 @@ if __name__ == '__main__':
 
     # Read in all of the words in a file
     print "[+] Analysing '" + args.inputfile + "'"
-    words = re.findall(r"['\-\w]+", open(args.inputfile).read().lower())
+
+    # Shall we include digits?
+    if args.allowdigits:
+        words = re.findall(r"['\-\w]+", open(args.inputfile).read().lower())
+    else:
+        words = re.findall(r"['\-A-Za-z]+", open(args.inputfile).read().lower())
 
     for word in words:
         word = word.strip(r"&^%$#@!")
+
+        # Allow hyphenated words, but not hyphens as words on their own.
+        if word == '-':
+            continue
+
         word_pair = ''
         word_triple = ''
         word_quad = ''
