@@ -121,11 +121,8 @@ def print_results(word_stats, output_file):
 
     out.write('Total chars parsed = ' + str(word_stats['total_chars']) + '\n')
 
-    print_n_word_frequencies(count_words, args.top_n, out)
-    print_n_word_frequencies(count_pairs, args.top_n, out)
-    print_n_word_frequencies(count_triples, args.top_n, out)
-    print_n_word_frequencies(count_quads, args.top_n, out)
-    print_n_word_frequencies(count_5_words, args.top_n, out)
+    for i in range(max_n_word):
+        print_n_word_frequencies(counters[i], args.top_n, out)
 
     total_dev = 0.0
 
@@ -171,14 +168,14 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Perform letter, word and n-tuple frequency analysis on text files.')
     parser.add_argument('--filename', '-f', dest='inputfile', required=True, help='Text file to parse.')
+    parser.add_argument('--ntuple', '-n', dest='max_n_word', required=False, default=4, type=int, help='The maximum length n-tuple of words')
     parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words')
     args = parser.parse_args()
 
-    count_words = collections.Counter()
-    count_pairs = collections.Counter()
-    count_triples = collections.Counter()
-    count_quads = collections.Counter()
-    count_5_words = collections.Counter()
+    max_n_word = args.max_n_word
+    n_words = ['' for i in range(max_n_word)]
+    prev_n_words = ['' for i in range(max_n_word)]
+    counters = [collections.Counter() for i in range(max_n_word)]
 
     # Read in all of the words in a file
     print "[+] Analysing '" + args.inputfile + "'"
@@ -212,32 +209,16 @@ if __name__ == '__main__':
                 word_stats['char_counts'][char.lower()] += 1.0
 
         # Tally words.
-        count_words[word] += 1
+        for i in range(1, max_n_word):
+            if prev_n_words[i - 1] != '':
+                n_words[i] = prev_n_words[i - 1] + ' ' + word
+                counters[i][n_words[i]] += 1
 
-        if previous_word != '':
-            # Tally word-pairs.
-            word_pair = previous_word + ' ' + word
-            count_pairs[word_pair] += 1
+        n_words[0] = word
+        counters[0][word] += 1
 
-        if previous_pair != '':
-            # Tally word-triples
-            word_triple = previous_pair + ' ' + word
-            count_triples[word_triple] += 1
-
-        if previous_triple != '':
-            # Tally word-quads
-            word_quad = previous_triple + ' ' + word
-            count_quads[word_quad] += 1
-
-        if previous_quad != '':
-            # Tally word-quads
-            word_5 = previous_quad + ' ' + word
-            count_5_words[word_5] += 1
-
-        previous_word = word
-        previous_pair = word_pair
-        previous_triple = word_triple
-        previous_quad = word_quad
+        for i in range(0, max_n_word):
+            prev_n_words[i] = n_words[i]
 
     # Calculate the mean word length
     word_stats['mean_length'] = word_stats['total_chars'] / word_stats['total_words']
