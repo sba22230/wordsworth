@@ -3,14 +3,14 @@ wordsworth
 
 Frequency analysis of letters, words and n-tuples.
 
-Usage:
+Example: To print the top 50 n-words in textfile.txt
 
 ```
-python wordsworth --filename textfile.txt
+python wordsworth --filename textfile.txt [--top 50]
 ```
 
 ```
-python wordsworth -f textfile.txt
+python wordsworth -f textfile.txt [-t 50]
 ```
 
 Other use cases:
