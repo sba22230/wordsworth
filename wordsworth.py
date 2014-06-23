@@ -73,13 +73,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Perform letter, word and n-tuple frequency analysis on text files.')
     parser.add_argument('--filename', '-f', dest='inputFile', required=True, help='Text file to parse.')
     args = parser.parse_args()
-    
+
     # Read in all of the words in a file
     filename = args.inputFile
     f = open(filename, 'r')
-    
+
     print "[+] Analysing '" + args.inputFile + "'"
-    
+
     lines = f.readlines()
     for line in lines:
         words = line.split()
@@ -88,43 +88,15 @@ if __name__ == '__main__':
             punc = ''
 
             #Clean the words up first
-            if word.endswith('.'):
-                word = word.replace('.', '')
-                punc = '.'
-            if word.endswith(','):
-                word = word.replace(',', '')
-                punc = ','
-            if word.endswith(':'):
-                word = word.replace(':', '')
-                punc = ':'
-            if word.endswith(';'):
-                word = word.replace(';', '')
-                punc = ';'
-            if word.endswith('"'):
-                word = word.replace('"', '')
-                punc = '"'
-            if word.endswith('?'):
-                word = word.replace('?', '')
-                punc = '?'
-            if word.endswith('!'):
-                word = word.replace('!', '')
-                punc = '!'
-            if word.endswith("'"):
-                word = word.replace("'", '')
-                punc = "'"
-            if word.endswith('('):
-                word = word.replace('(', '')
-                punc = '('
-            if word.endswith(')'):
-                word = word.replace(')', '')
-                punc = ')'
             word = word.replace(' ', '')
+            word = word.strip(r"&^%$#@!")
             word = word.lower()
 
     ##############################################################################
 
             length = len(word)
-            if word == '': break
+            if word == '':
+                break
 
             # Record longest word length
             if length > word_stats['max_length']:
