@@ -23,6 +23,24 @@ python wordsworth --filename textfile.txt --ntuple 10
 python wordsworth -f textfile.txt -n 10
 ```
 
+NLTK-enabled wordsworth: wordsworth-nltk.py provides exxtended analysis,
+including a frequency analysis of verbs, nouns, adjectives, pronouns etc.
+To run this script you will need to install the python Natural Language Toolkit (NLTK)
+and the Brown dataset which is used for token tagging. Fortunately this is very simple to install.
+
+Step 1. Install NLTK 
+```
+$ sudo pip install ntlk
+```
+Step 2. Launch the python interpretter
+```
+$ python
+```
+Step 3. Download the Brown dataset
+```python
+>>> import nltk
+>>> nltk.download('brown')
+```
 
 Other use cases:
 wordsworth can be used to parse subtitle (.srt) files in order to find good search candidates for videogrep.
