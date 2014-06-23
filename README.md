@@ -20,7 +20,7 @@ $ python wordsworth -f textfile.txt -n 10
 ```
 ###NLTK-enabled wordsworth:
 wordsworth-nltk.py provides extended analysis, including a frequency analysis of verbs, nouns, adjectives, pronouns etc.
-To run this script you will need to install the python Natural Language Toolkit (NLTK)
+To run this script you will need to install the python [Natural Language Toolkit (NLTK)](https://github.com/nltk)
 and the Brown dataset which is used for token tagging. Fortunately this is very simple to install.
 
 Step 1. Install NLTK 
