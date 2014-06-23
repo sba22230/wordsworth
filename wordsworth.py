@@ -59,7 +59,8 @@ word_stats = {
                                    'm': 0.0, 'n': 0.0, 'o': 0.0, 'p': 0.0, 'q': 0.0, 'r': 0.0,
                                    's': 0.0, 't': 0.0, 'u': 0.0, 'v': 0.0, 'w': 0.0, 'x': 0.0,
                                    'y': 0.0, 'z': 0.0
-                                  }
+                                  },
+              'lexical_density': -1
              }
 
 
@@ -160,6 +161,10 @@ def print_results(word_stats, output_file):
     out.write('\nAverage percentage deviation from random = ' +
               str(average_dev)[:4] + '%')
 
+    print ('Lexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
+
+    out.write('\nLexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
+
     print '\nWritten results to ' + args.inputfile.split('.')[0] + '-stats.txt\n'
 
 
@@ -240,6 +245,11 @@ if __name__ == '__main__':
         total_chars = word_stats['total_chars']
         percentage = 100.0 * (char_count / total_chars)
         word_stats['char_percentages'][char] = percentage
+
+    # Calculate the lexical density of the text.
+    total_unique_words = len(counters[0])
+    total_words = sum(counters[0].values())
+    word_stats['lexical_density'] = 100.0 * total_unique_words / float(total_words)
 
     # Print results
     out = open(args.inputfile.split('.')[0] + '-stats.txt', 'w')
