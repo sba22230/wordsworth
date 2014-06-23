@@ -42,6 +42,7 @@ previous_quad = ''
 word_stats = {
               'total_chars': 0,
               'total_words': 0,
+              'total_sentences': 0,
               'max_length': 0,
               'min_length': 999,
               'mean_length': -1,
@@ -61,7 +62,8 @@ word_stats = {
                                    's': 0.0, 't': 0.0, 'u': 0.0, 'v': 0.0, 'w': 0.0, 'x': 0.0,
                                    'y': 0.0, 'z': 0.0
                                   },
-              'lexical_density': -1
+              'lexical_density': -1,
+              'ARI_score': -1
              }
 
 
@@ -130,17 +132,18 @@ def print_results(word_stats, output_file):
     for i in range(max_n_word):
         print_n_word_frequencies(counters[i], args.top_n, out)
 
-    print_n_word_frequencies(personal_pronoun_counter, 10, out, tag="Personal Pronouns")
-    print_n_word_frequencies(noun_counter, 10, out, tag="Nouns")
-    print_n_word_frequencies(adjective_counter, 10, out, tag="Adjectives")
-    print_n_word_frequencies(adverb_counter, 10, out, tag="Adverbs")
-    print_n_word_frequencies(verb_counter, 10, out, tag="Verbs")
+    print_n_word_frequencies(personal_pronoun_counter, args.top_n, out, tag="Personal Pronouns")
+    print_n_word_frequencies(noun_counter, args.top_n, out, tag="Nouns")
+    print_n_word_frequencies(adjective_counter, args.top_n, out, tag="Adjectives")
+    print_n_word_frequencies(adverb_counter, args.top_n, out, tag="Adverbs")
+    print_n_word_frequencies(verb_counter, args.top_n, out, tag="Verbs")
 
     total_dev = 0.0
 
     print '\n===' + blue + ' FREQUENCY ANALYSIS ' + normal + '==='
     out.write('\n=== FREQUENCY ANALYSIS ===\n')
 
+    # Display information about character frequencies.
     for char in sorted(word_stats['char_percentages'].iterkeys()):
         bar = ''
         perc = word_stats['char_percentages'][char]
@@ -172,9 +175,31 @@ def print_results(word_stats, output_file):
     out.write('\nAverage percentage deviation from random = ' +
               str(average_dev)[:4] + '%')
 
-    print ('Lexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
+    print '\n===' + blue + ' WORD LENGTH ' + normal + '==='
+    out.write('\n=== WORD LENGTH ===\n')
+
+    # Display data above word length frequency.
+    length_counts = word_length_counter.most_common()
+    for length in length_counts:
+        l = length[0]
+        perc = 100.0 * length[1] / float(word_stats['total_words'])
+        bar = ''
+        for i in range(0, int(perc)):
+            bar += '#'
+
+        print (l + ' |' + red + bar + normal + ' ' + str(perc)[:4] +
+                '% (' + str(length[1]) + ')')
+
+        out.write(l + ' |' + red + bar + normal + ' ' + str(perc)[:4] +
+                '% (' + str(length[1]) + ')\n')
+
+    print ('\nLexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
 
     out.write('\nLexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
+
+    print ('ARI (Automated Readability Index) score = ' + str(word_stats['ARI_score'])[:5])
+
+    out.write('\nARI (Automated Readability Index) score = ' + str(word_stats['ARI_score'])[:5] + '%')
 
     print '\nWritten results to ' + args.inputfile.split('.')[0] + '-stats.txt\n'
 
@@ -189,10 +214,14 @@ if __name__ == '__main__':
     parser.add_argument('--allow-digits', '-d', dest='allowdigits', default=False, required=False, help='Allow digits to be parsed (true/false). Default is false.')
     args = parser.parse_args()
 
+    # Dynamically allocated n-word counters
     max_n_word = args.max_n_word
     n_words = ['' for i in range(max_n_word)]
     prev_n_words = ['' for i in range(max_n_word)]
     counters = [collections.Counter() for i in range(max_n_word)]
+
+    # Word length counter
+    word_length_counter = collections.Counter()
 
     # Read in all of the words in a file
     print "[+] Reading text from '" + args.inputfile + "'..."
@@ -241,7 +270,10 @@ if __name__ == '__main__':
     else:
         words = re.findall(r"['\-A-Za-z]+", text)
 
-    print "[+] Performing frequency analysis..."
+    print "[+] Counting sentences..."
+    word_stats['total_sentences'] = len(nltk.sent_tokenize(text))
+
+    print "[+] Performing frequency analysis of n-words..."
     for word in words:
         word = word.strip(r"&^%$#@!")
 
@@ -249,11 +281,9 @@ if __name__ == '__main__':
         if word == '-':
             continue
 
-        word_pair = ''
-        word_triple = ''
-        word_quad = ''
-
+        # Record all word lengths
         length = len(word)
+        word_length_counter[str(length)] += 1
 
         # Record longest word length
         if length > word_stats['max_length']:
@@ -269,7 +299,7 @@ if __name__ == '__main__':
         word_stats['total_chars'] += length
         word_stats['total_words'] += 1.0
 
-        # Note the charaters in each word.
+        # Tally the charaters in each word.
         for char in word:
             if char.lower() in word_stats['char_counts']:
                 word_stats['char_counts'][char.lower()] += 1.0
@@ -300,6 +330,13 @@ if __name__ == '__main__':
     total_unique_words = len(counters[0])
     total_words = sum(counters[0].values())
     word_stats['lexical_density'] = 100.0 * total_unique_words / float(total_words)
+
+    # Calculate the ARI score.
+    # See http://www.usingenglish.com/members/text-analysis/help/readability.html
+    total_words = sum(counters[0].values())
+    ASL = total_words / float(word_stats['total_sentences'])
+    ALW = word_stats['total_chars'] / float(total_words)
+    word_stats['ARI_score'] = (0.5 * ASL) + (4.71 * ALW) - 21.43
 
     # Print results
     out = open(args.inputfile.split('.')[0] + '-stats.txt', 'w')
