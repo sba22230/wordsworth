@@ -3,7 +3,7 @@ wordsworth
 
 Frequency analysis of letters, words and arbitrary-length n-tuples of words.
 
-###Basic wordworth:
+###Basic wordsworth:
 
 ####Example 1: Print the top 50 n-words in textfile.txt
 
