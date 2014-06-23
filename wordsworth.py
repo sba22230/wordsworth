@@ -36,6 +36,7 @@ normal = "\x1b[0m"
 previous_word = ''
 previous_pair = ''
 previous_triple = ''
+previous_quad = ''
 
 word_stats = {
               'total_chars': 0,
@@ -43,7 +44,6 @@ word_stats = {
               'max_length': 0,
               'min_length': 999,
               'mean_length': -1,
-              'common_words': [],
               'longest_word': '',
               'shortest_word': '',
               'char_counts': {
@@ -121,12 +121,11 @@ def print_results(word_stats, output_file):
 
     out.write('Total chars parsed = ' + str(word_stats['total_chars']) + '\n')
 
-    top_n = 50
-
-    print_n_word_frequencies(count_words, top_n, out)
-    print_n_word_frequencies(count_pairs, top_n, out)
-    print_n_word_frequencies(count_triples, top_n, out)
-    print_n_word_frequencies(count_quads, top_n, out)
+    print_n_word_frequencies(count_words, args.top_n, out)
+    print_n_word_frequencies(count_pairs, args.top_n, out)
+    print_n_word_frequencies(count_triples, args.top_n, out)
+    print_n_word_frequencies(count_quads, args.top_n, out)
+    print_n_word_frequencies(count_5_words, args.top_n, out)
 
     total_dev = 0.0
 
@@ -172,21 +171,24 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Perform letter, word and n-tuple frequency analysis on text files.')
     parser.add_argument('--filename', '-f', dest='inputfile', required=True, help='Text file to parse.')
+    parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words')
     args = parser.parse_args()
-
-    # Read in all of the words in a file
-    print "[+] Analysing '" + args.inputfile + "'"
-    words = re.findall(r'\w+', open(args.inputfile).read().lower())
 
     count_words = collections.Counter()
     count_pairs = collections.Counter()
     count_triples = collections.Counter()
     count_quads = collections.Counter()
+    count_5_words = collections.Counter()
+
+    # Read in all of the words in a file
+    print "[+] Analysing '" + args.inputfile + "'"
+    words = re.findall(r"['\-\w]+", open(args.inputfile).read().lower())
 
     for word in words:
         word = word.strip(r"&^%$#@!")
         word_pair = ''
         word_triple = ''
+        word_quad = ''
 
         length = len(word)
 
@@ -227,9 +229,15 @@ if __name__ == '__main__':
             word_quad = previous_triple + ' ' + word
             count_quads[word_quad] += 1
 
+        if previous_quad != '':
+            # Tally word-quads
+            word_5 = previous_quad + ' ' + word
+            count_5_words[word_5] += 1
+
         previous_word = word
         previous_pair = word_pair
         previous_triple = word_triple
+        previous_quad = word_quad
 
     # Calculate the mean word length
     word_stats['mean_length'] = word_stats['total_chars'] / word_stats['total_words']
