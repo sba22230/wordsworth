@@ -55,3 +55,5 @@ Step 3. Download the Brown dataset
 ![Alt text](/screenshots/screenshot4.png?raw=true "screenshot4.png")
 <br>
 ![Alt text](/screenshots/screenshot5.png?raw=true "screenshot5.png")
+<br>
+![Alt text](/screenshots/screenshot6.png?raw=true "screenshot6.png")
