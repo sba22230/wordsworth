@@ -36,6 +36,7 @@ normal = "\x1b[0m"
 
 class wordsworth:
     args = 0
+    ignore_list = []
     out = 0
     words = []
     previous_word = ''
@@ -75,6 +76,7 @@ class wordsworth:
 
     def __init__(self, commandline_args):
         args = commandline_args
+        self.ignore_list = str(args.ignore_list).split(",")
         
 
     def print_n_word_frequencies(self, n_word_counter):
@@ -202,6 +204,10 @@ class wordsworth:
 
     def compute_stats(self):
         for word in self.words:
+        
+            if word in self.ignore_list:
+                continue
+        
             word = word.strip(r"&^%$#@!")
 
             # Allow hyphenated words, but not hyphens as words on their own.
@@ -265,6 +271,8 @@ if __name__ == '__main__':
     parser.add_argument('--ntuple', '-n', dest='max_n_word', required=False, default=4, type=int, help='The maximum length n-tuple of words. Default is 4.')
     parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words. Default is 20.')
     parser.add_argument('--allow-digits', '-d', dest='allow_digits', default=False, required=False, help='Allow digits to be parsed (true/false). Default is false.')
+    parser.add_argument('--ignore', '-i', dest='ignore_list', required=False, help='Comma-delimted list of things to ignore')
+ 
     args = parser.parse_args()
 
     w = wordsworth(args)

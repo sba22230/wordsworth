@@ -176,7 +176,7 @@ def print_results(word_stats, output_file):
               str(average_dev)[:4] + '%')
 
     print '\n===' + blue + ' WORD LENGTH ' + normal + '==='
-    out.write('\n=== WORD LENGTH ===\n')
+    out.write('\n\n=== WORD LENGTH ===\n')
 
     # Display data above word length frequency.
     length_counts = word_length_counter.most_common()
@@ -190,7 +190,7 @@ def print_results(word_stats, output_file):
         print (l + ' |' + red + bar + normal + ' ' + str(perc)[:4] +
                 '% (' + str(length[1]) + ')')
 
-        out.write(l + ' |' + red + bar + normal + ' ' + str(perc)[:4] +
+        out.write(l + ' |' + bar + ' ' + str(perc)[:4] +
                 '% (' + str(length[1]) + ')\n')
 
     print ('\nLexical density = ' + str(word_stats['lexical_density'])[:5] + '%')
@@ -212,7 +212,11 @@ if __name__ == '__main__':
     parser.add_argument('--ntuple', '-n', dest='max_n_word', required=False, default=4, type=int, help='The maximum length n-tuple of words. Default is 4.')
     parser.add_argument('--top', '-t', dest='top_n', required=False, default=20, type=int, help='List the top t most frequent n-words. Default is 20.')
     parser.add_argument('--allow-digits', '-d', dest='allowdigits', default=False, required=False, help='Allow digits to be parsed (true/false). Default is false.')
+    parser.add_argument('--ignore', '-i', dest='ignore_list', required=False, help='Comma-delimted list of things to ignore')
+ 
     args = parser.parse_args()
+
+    ignore_list = str(args.ignore_list).split(",")
 
     # Dynamically allocated n-word counters
     max_n_word = args.max_n_word
@@ -275,6 +279,10 @@ if __name__ == '__main__':
 
     print "[+] Performing frequency analysis of n-words..."
     for word in words:
+    
+        if word in ignore_list:
+            continue
+        
         word = word.strip(r"&^%$#@!")
 
         # Allow hyphenated words, but not hyphens as words on their own.
