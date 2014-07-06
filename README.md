@@ -25,7 +25,7 @@ $ python wordsworth --filename textfile.txt --ignore the,a,--
 ```
 $ python wordsworth -f textfile.txt -i the,a,--
 ```
-####Example 3: Ignore just '--'.
+####Example 4: Ignore just '--'.
 ```
 $ python wordsworth --filename textfile.txt --ignore ,--
 ```
