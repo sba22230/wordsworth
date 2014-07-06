@@ -25,6 +25,13 @@ $ python wordsworth --filename textfile.txt --ignore the,a,--
 ```
 $ python wordsworth -f textfile.txt -i the,a,--
 ```
+####Example 3: Ignore just '--'.
+```
+$ python wordsworth --filename textfile.txt --ignore ,--
+```
+```
+$ python wordsworth -f textfile.txt -i ,--
+```
 ###NLTK-enabled wordsworth:
 wordsworth-nltk.py provides extended analysis, including a frequency analysis of verbs, nouns, adjectives, pronouns etc.
 To run this script you will need to install the python [Natural Language Toolkit (NLTK)](https://github.com/nltk)
