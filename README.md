@@ -49,6 +49,7 @@ Step 3. Download the Brown dataset
 ```python
 >>> import nltk
 >>> nltk.download('brown')
+>>> nltk.download('punkt')
 ```
 
 ###Example output:
