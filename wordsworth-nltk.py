@@ -275,7 +275,7 @@ if __name__ == '__main__':
         words = re.findall(r"['\-A-Za-z]+", text)
 
     print "[+] Counting sentences..."
-    word_stats['total_sentences'] = len(nltk.sent_tokenize(text))
+    word_stats['total_sentences'] = len(nltk.sent_tokenize(text.decode('utf-8')))
 
     print "[+] Performing frequency analysis of n-words..."
     for word in words:
