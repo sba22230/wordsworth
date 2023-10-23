@@ -75,10 +75,10 @@ def print_n_word_frequencies(n_word_counter, top_n, output_file, tag=None):
         n = len(m[0][0].split(' '))
 
         if tag == None:
-            print '\n===' + blue + ' Commonest ' + str(n) + '-words' + normal + ' ==='
+            print ('\n===' + blue + ' Commonest ' + str(n) + '-words' + normal + ' ===')
             out.write('\n=== Commonest ' + str(n) + '-words ===\n')
         else:
-            print '\n===' + blue + ' Commonest ' + tag + normal + ' ==='
+            print ('\n===' + blue + ' Commonest ' + tag + normal + ' ===')
             out.write('\n=== Commonest ' + tag + ' ===\n')
 
         for i in range(0, min(unique_entries, top_n)):
@@ -95,10 +95,10 @@ def print_n_word_frequencies(n_word_counter, top_n, output_file, tag=None):
 
 
 def print_results(word_stats, output_file):
-    print '\n===' + blue + ' RESULTS ' + normal + '==='
+    print ('\n===' + blue + ' RESULTS ' + normal + '===')
     out.write('=== RESULTS ===\n')
 
-    print 'File = ' + purple + str(args.inputfile) + normal
+    print ('File = ' + purple + str(args.inputfile) + normal)
     out.write('File = ' + str(args.inputfile) + '\n')
 
     print ('Longest word = ' + purple + str(word_stats['longest_word']) + normal +
@@ -140,11 +140,12 @@ def print_results(word_stats, output_file):
 
     total_dev = 0.0
 
-    print '\n===' + blue + ' FREQUENCY ANALYSIS ' + normal + '==='
+    print ('\n===' + blue + ' FREQUENCY ANALYSIS ' + normal + '===')
     out.write('\n=== FREQUENCY ANALYSIS ===\n')
 
     # Display information about character frequencies.
-    for char in sorted(word_stats['char_percentages'].iterkeys()):
+    #for char in sorted(word_stats['char_percentages'].iterkeys()):
+    for char  in sorted(word_stats['char_percentages'].keys()):
         bar = ''
         perc = word_stats['char_percentages'][char]
 
@@ -175,7 +176,7 @@ def print_results(word_stats, output_file):
     out.write('\nAverage percentage deviation from random = ' +
               str(average_dev)[:4] + '%')
 
-    print '\n===' + blue + ' WORD LENGTH ' + normal + '==='
+    print ('\n===' + blue + ' WORD LENGTH ' + normal + '===')
     out.write('\n\n=== WORD LENGTH ===\n')
 
     # Display data above word length frequency.
@@ -201,7 +202,7 @@ def print_results(word_stats, output_file):
 
     out.write('\nARI (Automated Readability Index) score = ' + str(word_stats['ARI_score'])[:5] + '%')
 
-    print '\nWritten results to ' + args.inputfile.split('.')[0] + '-stats.txt\n'
+    print ('\nWritten results to ' + args.inputfile.split('.')[0] + '-stats.txt\n')
 
 
 if __name__ == '__main__':
@@ -228,20 +229,20 @@ if __name__ == '__main__':
     word_length_counter = collections.Counter()
 
     # Read in all of the words in a file
-    print "[+] Reading text from '" + args.inputfile + "'..."
+    print ("[+] Reading text from '" + args.inputfile + "'...")
     text = open(args.inputfile).read().lower()
 
     # Use nltk to classify/tag each word/token.
-    print "[+] Tokenizing text..."
+    print ("[+] Tokenizing text...")
     text = open(args.inputfile).read().lower()
     tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+|[^\w\s]+')
     tokens = tokenizer.tokenize(text)
 
-    print "[+] Tagging tokens..."
+    print ("[+] Tagging tokens...")
     tagger = nltk.UnigramTagger(nltk.corpus.brown.tagged_sents())
     tagged_tokens = tagger.tag(tokens)
 
-    print "[+] Tallying tags..."
+    print ("[+] Tallying tags...")
     personal_pronoun_counter = collections.Counter()
     adjective_counter = collections.Counter()
     adverb_counter = collections.Counter()
@@ -274,10 +275,11 @@ if __name__ == '__main__':
     else:
         words = re.findall(r"['\-A-Za-z]+", text)
 
-    print "[+] Counting sentences..."
-    word_stats['total_sentences'] = len(nltk.sent_tokenize(text.decode('utf-8')))
+    print ("[+] Counting sentences...")
+    #word_stats['total_sentences'] = len(nltk.sent_tokenize(text.decode('utf-8')))
+    word_stats['total_sentences'] = len(nltk.sent_tokenize(text))
 
-    print "[+] Performing frequency analysis of n-words..."
+    print ("[+] Performing frequency analysis of n-words...")
     for word in words:
     
         if word in ignore_list:
