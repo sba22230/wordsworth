@@ -19,13 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function # for Python 2 backwards compatibility
-from blessings import Terminal
+#from __future__ import print_function # for Python 2 backwards compatibility
+#from blessings import terminal
 import collections
 import re
 
-# Blessings for terminal colors
-term  = Terminal()
+""" # Blessings for terminal colors
+term  = terminal()
 underline = term.underline
 black = term.black
 red = term.red
@@ -34,7 +34,7 @@ yellow = term.yellow
 blue = term.blue
 purple = term.purple
 turquoise = term.turquoise
-normal = term.normal
+normal = term.normal """
 
 class wordsworth:
     args = 0
